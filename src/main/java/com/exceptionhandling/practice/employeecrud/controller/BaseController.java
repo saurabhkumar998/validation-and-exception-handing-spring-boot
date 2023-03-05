@@ -1,5 +1,6 @@
 package com.exceptionhandling.practice.employeecrud.controller;
 
+import com.exceptionhandling.practice.employeecrud.exceptions.BusinessException;
 import com.exceptionhandling.practice.employeecrud.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +43,13 @@ public abstract class BaseController {
         exception.printStackTrace();
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<String> handleBusinessException(BusinessException exception) {
+        exception.printStackTrace();
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
