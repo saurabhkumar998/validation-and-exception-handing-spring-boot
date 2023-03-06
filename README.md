@@ -1,5 +1,5 @@
 # exception-handing-spring-boot
-learning exception handling in spring boot application
+learning validation and exception handling in spring boot application
 
 
 There are two ways to handle exceptions in a spring boot application:
