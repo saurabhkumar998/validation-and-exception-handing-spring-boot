@@ -5,8 +5,7 @@ import com.exceptionhandling.practice.employeecrud.entity.Employee;
 import com.exceptionhandling.practice.employeecrud.exceptions.UserNotFoundException;
 import com.exceptionhandling.practice.employeecrud.service.EmployeeService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.exceptionhandling.practice.employeecrud.util.EmployeeLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,16 +18,24 @@ import java.util.List;
 @RequestMapping("/api")
 public class EmployeeController extends BaseController {
 
-    Logger logger = LoggerFactory.getLogger(EmployeeController.class);
     @Autowired
     private EmployeeService employeeService;
 
     // Using Path Variable/Parameter
+
     @GetMapping(value="/employees/{employeeId}")
     public ResponseEntity<Employee> retrieveEmployeeByPathVariable(@PathVariable("employeeId") int employeeId) throws UserNotFoundException {
 
-        logger.trace("retrieveEmployeeByPathVariable method called");
-        return new ResponseEntity<Employee>(employeeService.findEmployee(employeeId), HttpStatus.OK);
+        EmployeeLogger.logStart(this,"retrieveEmployeeByPathVariable");
+
+        EmployeeLogger.logInfo(this,"Calling findEmployee method...");
+
+        Employee employee = employeeService.findEmployee(employeeId);
+
+        EmployeeLogger.logEnd(this, "retrieveEmployeeByPathVariable");
+
+        return new ResponseEntity<Employee>(employee, HttpStatus.OK);
+
     }
 
     /*
@@ -37,24 +44,56 @@ public class EmployeeController extends BaseController {
      */
     @GetMapping("/employees/")
     public ResponseEntity<Employee> retrieveEmployeeByRequestParameter(@RequestParam("employeeId") int employeeId) throws UserNotFoundException {
-        return new ResponseEntity<>(employeeService.findEmployee(employeeId),HttpStatus.OK);
+
+        EmployeeLogger.logStart(this, "retrieveEmployeeByRequestParameter");
+
+        EmployeeLogger.logInfo(this, "calling findEmployee method...");
+
+        Employee employee = employeeService.findEmployee(employeeId);
+
+        EmployeeLogger.logEnd(this, "retrieveEmployeeByRequestParameter");
+
+        return new ResponseEntity<>(employee,HttpStatus.OK);
     }
 
     @GetMapping("/employees")
     public ResponseEntity<List<Employee>> getAllEmployees() {
-        return new ResponseEntity<>(employeeService.findAllEmployees(), HttpStatus.OK);
+        EmployeeLogger.logStart(this, "getAllEmployees");
+
+        EmployeeLogger.logInfo(this, "calling findAllEmployees method...");
+
+        List<Employee> employees = employeeService.findAllEmployees();
+
+        EmployeeLogger.logEnd(this, "getAllEmployees");
+
+        return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
     @PostMapping(value="/employees", consumes="application/json")
     public ResponseEntity<Employee> addNewEmployee(@RequestBody @Validated EmployeeDto employeeDto) {
 
-        return new ResponseEntity<>(employeeService.addEmployee(employeeDto), HttpStatus.CREATED);
+        EmployeeLogger.logStart(this, "addNewEmployee");
+
+        EmployeeLogger.logInfo(this,  "calling addEmployee method...");
+
+        Employee employee = employeeService.addEmployee(employeeDto);
+
+        EmployeeLogger.logEnd(this, "addNewEmployee");
+
+        return new ResponseEntity<>(employee, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/employees/{employeeId}")
     public ResponseEntity<String> deleteEmployee(@PathVariable("employeeId") int employeeId) throws UserNotFoundException {
-        employeeService.removeEmployee(employeeId);
-        return new ResponseEntity<String>("Successfully Deleted the Employee", HttpStatus.OK);
 
+        EmployeeLogger.logStart(this, "deleteEmployee");
+
+        EmployeeLogger.logInfo(this, "calling deleteEmployee method...");
+
+        employeeService.removeEmployee(employeeId);
+
+        EmployeeLogger.logEnd(this, "deleteEmployee");
+
+        return new ResponseEntity<String>("Successfully Deleted the Employee", HttpStatus.OK);
     }
 }

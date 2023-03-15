@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EmployeeLogger {
-
     private static Logger LOGGER;
 
     private EmployeeLogger() {
@@ -30,7 +29,7 @@ public class EmployeeLogger {
      * @param object
      * @param message
      */
-    private static void logDebug(Object object, String message) {
+    public static void logDebug(Object object, String message) {
         LOGGER = LoggerFactory.getLogger(object.getClass());
         if(LOGGER.isDebugEnabled()) {
             LOGGER.debug(message);
@@ -43,7 +42,7 @@ public class EmployeeLogger {
      * @param object
      * @param message
      */
-    private static void logStart(Object object, String message) {
+    public static void logStart(Object object, String message) {
         LOGGER = LoggerFactory.getLogger(object.getClass());
         if(LOGGER.isInfoEnabled()) {
             LOGGER.info(message + " - START");
@@ -56,7 +55,7 @@ public class EmployeeLogger {
      * @param object
      * @param message
      */
-    private static void logEnd(Object object, String message) {
+    public static void logEnd(Object object, String message) {
         LOGGER = LoggerFactory.getLogger(object.getClass());
         if(LOGGER.isInfoEnabled()) {
             LOGGER.info(message + " - END");
@@ -82,10 +81,10 @@ public class EmployeeLogger {
      * @param object
      * @param message
      */
-    public static void logError(Object object, String message) {
+    public static void logError(Object object, Exception exception) {
         LOGGER = LoggerFactory.getLogger(object.getClass());
         if(LOGGER.isErrorEnabled()) {
-            LOGGER.error(message);
+            LOGGER.error(exception.getMessage(), exception);
         }
     }
 
