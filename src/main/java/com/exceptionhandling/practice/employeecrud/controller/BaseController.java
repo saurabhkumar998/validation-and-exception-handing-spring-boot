@@ -2,6 +2,7 @@ package com.exceptionhandling.practice.employeecrud.controller;
 
 import com.exceptionhandling.practice.employeecrud.exceptions.BusinessException;
 import com.exceptionhandling.practice.employeecrud.exceptions.UserNotFoundException;
+import com.exceptionhandling.practice.employeecrud.util.EmployeeLogger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,7 +24,8 @@ public abstract class BaseController {
                 .getFieldErrors()
                 .forEach(error -> errorMap.put(error.getField(), error.getDefaultMessage()));
 
-        exception.printStackTrace();
+ //       exception.printStackTrace();
+        EmployeeLogger.logError(this, exception);
 
         return errorMap;
     }
@@ -40,21 +42,23 @@ public abstract class BaseController {
 */
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException exception) {
-        exception.printStackTrace();
+  //      exception.printStackTrace();
+        EmployeeLogger.logError(this, exception);
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<String> handleBusinessException(BusinessException exception) {
-        exception.printStackTrace();
+   //     exception.printStackTrace();
+        EmployeeLogger.logError(this, exception);
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleException(Exception exception) {
-        exception.printStackTrace();
+    //    exception.printStackTrace();
+        EmployeeLogger.logError(this, exception);
         return exception.getMessage();
     }
 }
