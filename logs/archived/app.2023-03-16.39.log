@@ -1,6 +1,6 @@
-2023-03-16 06:36:12,655 INFO  c.e.p.e.c.EmployeeController -- retrieveEmployeeByPathVariable - START 
-2023-03-16 06:36:12,656 INFO  c.e.p.e.c.EmployeeController -- Calling findEmployee method... 
-2023-03-16 06:36:12,663 ERROR c.e.p.e.c.EmployeeController -- Employee with the employee id 999999999 was not found 
+2023-03-16 06:36:13,970 INFO  c.e.p.e.c.EmployeeController -- retrieveEmployeeByPathVariable - START 
+2023-03-16 06:36:13,971 INFO  c.e.p.e.c.EmployeeController -- Calling findEmployee method... 
+2023-03-16 06:36:13,976 ERROR c.e.p.e.c.EmployeeController -- Employee with the employee id 999999999 was not found 
 com.exceptionhandling.practice.employeecrud.exceptions.UserNotFoundException: Employee with the employee id 999999999 was not found
 	at com.exceptionhandling.practice.employeecrud.service.EmployeeServiceImpl.findEmployee(EmployeeServiceImpl.java:30)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
@@ -65,4 +65,4 @@ com.exceptionhandling.practice.employeecrud.exceptions.UserNotFoundException: Em
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
 	at java.base/java.lang.Thread.run(Thread.java:1589)
-2023-03-16 06:36:12,688 WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver -- Resolved [com.exceptionhandling.practice.employeecrud.exceptions.UserNotFoundException: Employee with the employee id 999999999 was not found] 
+2023-03-16 06:36:13,979 WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver -- Resolved [com.exceptionhandling.practice.employeecrud.exceptions.UserNotFoundException: Employee with the employee id 999999999 was not found] 
