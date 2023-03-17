@@ -8,11 +8,14 @@ import com.exceptionhandling.practice.employeecrud.service.EmployeeService;
 import com.exceptionhandling.practice.employeecrud.util.EmployeeLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
@@ -69,7 +72,7 @@ public class EmployeeController extends BaseController {
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
-    @PostMapping(value="/employees", consumes="application/json")
+    @PostMapping(value="/employees", consumes="application/json", produces = "application/xml")
     public ResponseEntity<Employee> addNewEmployee(@RequestBody @Validated EmployeeDto employeeDto) {
 
         EmployeeLogger.logStart(this, "addNewEmployee");
@@ -83,8 +86,20 @@ public class EmployeeController extends BaseController {
         return new ResponseEntity<>(employee, HttpStatus.CREATED);
     }
 
+    @PutMapping(value = "/employees", consumes = "application/json")
+    public ResponseEntity<Employee> updateEmployeeUsingPut(@RequestBody Employee employee) throws UserNotFoundException {
+        return new ResponseEntity<>(employeeService.updateEmployeeUsingPutMethod(employee), HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "/employees/{employeeId}", consumes = "application/json")
+    public ResponseEntity<Employee> updateEmployeeUsingPatch(@PathVariable("employeeId") int employeeId,
+                                                             @RequestBody Map<Object, Object> fields) throws UserNotFoundException {
+        return new ResponseEntity<>(employeeService.updateEmployeeUsingPatchMethod(employeeId, fields), HttpStatus.OK);
+    }
+
     @DeleteMapping("/employees/{employeeId}")
-    public ResponseEntity<String> deleteEmployee(@PathVariable("employeeId") int employeeId) throws UserNotFoundException {
+    public ResponseEntity<String> deleteEmployee(@PathVariable(name = "employeeId", required = true) int employeeId)
+            throws UserNotFoundException {
 
         EmployeeLogger.logStart(this, "deleteEmployee");
 

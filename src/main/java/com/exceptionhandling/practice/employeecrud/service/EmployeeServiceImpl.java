@@ -1,14 +1,24 @@
 package com.exceptionhandling.practice.employeecrud.service;
 
 import com.exceptionhandling.practice.employeecrud.dto.EmployeeDto;
+import com.exceptionhandling.practice.employeecrud.entity.BaseClass;
 import com.exceptionhandling.practice.employeecrud.entity.Employee;
 import com.exceptionhandling.practice.employeecrud.exceptions.UserNotFoundException;
 import com.exceptionhandling.practice.employeecrud.repository.EmployeeRepository;
 import jakarta.transaction.Transactional;
+import org.apache.el.util.ReflectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -36,7 +46,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee addEmployee(EmployeeDto employeeDto) {
-        Employee employee = new Employee(0, employeeDto.getEmployeeName(), employeeDto.getEmployeeDept());
+        Employee employee = new Employee();
+        employee.setEmployeeName(employeeDto.getEmployeeName());
+        employee.setEmployeeDept(employeeDto.getEmployeeDept());
+        employee.setBaseClass(new BaseClass("1111",new Date(), "1111", new Date()));
+
         return repository.save(employee);
 
     }
@@ -51,5 +65,31 @@ public class EmployeeServiceImpl implements EmployeeService {
         }else {
             repository.deleteById(employeeId);
         }
+    }
+
+    @Override
+    public Employee updateEmployeeUsingPutMethod(Employee employee) throws UserNotFoundException {
+
+        Employee fetchedEmployee = repository.findByEmployeeId(employee.getEmployeeId());
+        employee.setBaseClass(new BaseClass(fetchedEmployee.getBaseClass().getCreateUser(), fetchedEmployee.getBaseClass().getCreateTimestamp(), "2222", new Date()));
+
+        return repository.save(employee);
+    }
+
+    @Override
+    public Employee updateEmployeeUsingPatchMethod(int employeeId, Map<Object, Object> fields) throws UserNotFoundException {
+        Employee fetchedEmployee = findEmployee(employeeId);
+
+        fields.forEach((key, value) -> {
+            Field field = ReflectionUtils.findField(Employee.class, (String) key);
+            field.setAccessible(true);
+            ReflectionUtils.setField(field, fetchedEmployee, value);
+        });
+
+        fetchedEmployee.setBaseClass(new BaseClass(fetchedEmployee.getBaseClass().getCreateUser(), fetchedEmployee.getBaseClass().getCreateTimestamp(), "2222", new Date()));
+
+
+        return repository.save(fetchedEmployee);
+
     }
 }
