@@ -86,15 +86,35 @@ public class EmployeeController extends BaseController {
         return new ResponseEntity<>(employee, HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/employees", consumes = "application/json")
-    public ResponseEntity<Employee> updateEmployeeUsingPut(@RequestBody Employee employee) throws UserNotFoundException {
-        return new ResponseEntity<>(employeeService.updateEmployeeUsingPutMethod(employee), HttpStatus.OK);
+    @PutMapping(value = "/employees/{employeeId}", consumes = "application/json")
+    public ResponseEntity<Employee> updateEmployeeUsingPut(@PathVariable("employeeId") int employeeId,
+                                                           @RequestBody @Validated EmployeeDto employeeDto) throws UserNotFoundException {
+       EmployeeLogger.logStart(this, "updateEmployeeUsingPut");
+
+        Employee employee = new Employee();
+        employee.setEmployeeId(employeeId);
+        employee.setEmployeeName(employeeDto.getEmployeeName());
+        employee.setEmployeeDept(employeeDto.getEmployeeDept());
+
+        EmployeeLogger.logInfo(this, "calling updateEmployeeUsingPutMethod...");
+        employee = employeeService.updateEmployeeUsingPutMethod(employee);
+
+        EmployeeLogger.logEnd(this, "updateEmployeeUsingPut");
+        return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
     @PatchMapping(value = "/employees/{employeeId}", consumes = "application/json")
     public ResponseEntity<Employee> updateEmployeeUsingPatch(@PathVariable("employeeId") int employeeId,
-                                                             @RequestBody Map<Object, Object> fields) throws UserNotFoundException {
-        return new ResponseEntity<>(employeeService.updateEmployeeUsingPatchMethod(employeeId, fields), HttpStatus.OK);
+                                                             @RequestBody @Validated Map<Object, Object> fields) throws UserNotFoundException {
+
+        EmployeeLogger.logStart(this, "updateEmployeeUsingPatch");
+        Employee employee = null;
+
+        EmployeeLogger.logInfo(this, "calling the updateEmployeeUsingPatchMethod... ");
+        employee = employeeService.updateEmployeeUsingPatchMethod(employeeId, fields);
+
+        EmployeeLogger.logEnd(this, "updateEmployeeUsingPatch");
+        return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
     @DeleteMapping("/employees/{employeeId}")
