@@ -6,10 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
-@Entity(name="T_EMPLOYEE_DETAILS")
+@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name="T_EMPLOYEE_DETAILS")
 public class Employee{
     @Id
     @GeneratedValue

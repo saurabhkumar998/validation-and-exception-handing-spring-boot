@@ -13,6 +13,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Embeddable
 public class BaseClass {
     private String createUser;
     @Temporal(TemporalType.TIMESTAMP)
