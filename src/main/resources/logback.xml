@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
+<configuration debug="true">
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <property name="LOG_FILE" value="logs/app.log"/>
+
+<!--    FILE LOGGING-->
 
     <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_FILE}</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>logs/archived/app.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <!-- each archived file, size max 5KB -->
+            <!-- each archived file, size max 50KB -->
             <maxFileSize>50KB</maxFileSize>
-            <!-- total size of all archive files, if total size > 20KB,
+            <!-- total size of all archive files, if total size > 200KB,
 				it will delete old archived file -->
             <totalSizeCap>200KB</totalSizeCap>
             <!-- 60 days to keep -->
@@ -19,9 +21,12 @@
 
         <encoder>
 <!--            <pattern>%d %p %c{1.} [%t] %m%n</pattern>-->
-            <pattern>%d %-5level %logger{35} -%kvp- %msg %n</pattern>
+<!--            <pattern>%d %-5level %logger{35} -%kvp- %msg %n</pattern>-->
+            <Pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Pattern>
         </encoder>
     </appender>
+
+<!--    CONSOLE LOGGING-->
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
@@ -38,38 +43,38 @@
         <smtpPort>587</smtpPort>
         <STARTTLS>true</STARTTLS>
         <asynchronousSending>true</asynchronousSending>
-        <username>EMAIL-ID</username>
+        <username>EMAIL_ID</username>
         <password>PASSWORD</password>
-        <to>TO-EMAIL-ID</to>
-        <from>EMAIL-ID</from>
+        <to>TO_EMAIL</to>
+        <from>EMAIL_ID</from>
 <!--        <subject>EmployeeCRUD - Application Error Occurred: %logger{20} - %msg{10}</subject>-->
         <subject>EmployeeCRUD - Application Error Occurred: %logger{20}</subject>
 
         <layout class="ch.qos.logback.classic.html.HTMLLayout"/>
     </appender>
 
-    <logger name="com.exceptionhandling" level="error" additivity="false">
+    <logger name="com.exceptionhandling" level="ERROR" additivity="false">
         <appender-ref ref="EMAIL"/>
     </logger>
 
-    <logger name="com.exceptionhandling" level="info" additivity="false">
+    <logger name="com.exceptionhandling" level="INFO" additivity="false">
         <appender-ref ref="FILE-ROLLING"/>
     </logger>
 
-    <logger name="com.exceptionhandling" level="info" additivity="false">
+    <logger name="com.exceptionhandling" level="INFO" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <root level="info">
-        <appender-ref ref="FILE-ROLLING"/>
-    </root>
+<!--    <root level="INFO">-->
+<!--        <appender-ref ref="FILE-ROLLING"/>-->
+<!--    </root>-->
 
-    <root level="info">
+    <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>
 
-    <root level="error">
-        <appender-ref ref="EMAIL"/>
-    </root>
+<!--    <root level="ERROR">-->
+<!--        <appender-ref ref="EMAIL"/>-->
+<!--    </root>-->
 
 </configuration>

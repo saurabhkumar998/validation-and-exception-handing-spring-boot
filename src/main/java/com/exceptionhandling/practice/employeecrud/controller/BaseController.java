@@ -2,6 +2,7 @@ package com.exceptionhandling.practice.employeecrud.controller;
 
 import com.exceptionhandling.practice.employeecrud.exceptions.BusinessException;
 import com.exceptionhandling.practice.employeecrud.exceptions.UserNotFoundException;
+import com.exceptionhandling.practice.employeecrud.exceptions.ValidationFailedException;
 import com.exceptionhandling.practice.employeecrud.util.EmployeeLogger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,12 @@ public abstract class BaseController {
         EmployeeLogger.logError(this, exception);
 
         return errorMap;
+    }
+
+    @ExceptionHandler(ValidationFailedException.class)
+    public ResponseEntity<String> handleValidationFailedException(ValidationFailedException exception) {
+        EmployeeLogger.logError(this, exception);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
     // We can return a simple string or a ResponseEntity (this is the best practice). If we are returning a ResponseEntity
     // then we  don't need the @ResponseStatus annotation because the  http status is already present in the response entity

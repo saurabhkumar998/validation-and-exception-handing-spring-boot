@@ -1,57 +1,41 @@
 package com.exceptionhandling.practice.employeecrud.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity(name="T_EMPLOYEE_DETAILS")
-public class Employee {
+import java.util.Objects;
+
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name="T_EMPLOYEE_DETAILS")
+public class Employee{
     @Id
     @GeneratedValue
+    @Column(length = 50, name = "EMPLOYEE_ID")
     private int employeeId;
+    @Column(length = 50, name = "EMPLOYEE_NAME")
     private String employeeName;
+    @Column(length = 50, name = "EMPLOYEE_DEPT")
     private String employeeDept;
+    @Embedded
+    private BaseClass baseClass;
 
-    public Employee(){
 
-    }
-    public Employee(int employeeId, String employeeName, String employeeDept) {
-        this.employeeId = employeeId;
-        this.employeeName = employeeName;
-        this.employeeDept =  employeeDept;
-
-    }
-
-    public int getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId;
-    }
-
-    public String getEmployeeName() {
-        return employeeName;
-    }
-
-    public void setEmployeeName(String employeeName) {
-        this.employeeName = employeeName;
-    }
-
-    public String getEmployeeDept() {
-        return employeeDept;
-    }
-
-    public void setEmployeeDept(String employeeDept) {
-        this.employeeDept = employeeDept;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return employeeId == employee.employeeId && employeeName.equals(employee.employeeName) && employeeDept.equals(employee.employeeDept);
     }
 
     @Override
-    public String toString() {
-        return "Employee{" +
-                "employeeId=" + employeeId +
-                ", employeeName='" + employeeName + '\'' +
-                ", employeeDept='" + employeeDept + '\'' +
-                '}';
+    public int hashCode() {
+        return Objects.hash(employeeId, employeeName, employeeDept);
     }
 }

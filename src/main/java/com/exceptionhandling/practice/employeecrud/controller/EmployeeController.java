@@ -1,6 +1,7 @@
 package com.exceptionhandling.practice.employeecrud.controller;
 
 import com.exceptionhandling.practice.employeecrud.dto.EmployeeDto;
+import com.exceptionhandling.practice.employeecrud.entity.BaseClass;
 import com.exceptionhandling.practice.employeecrud.entity.Employee;
 import com.exceptionhandling.practice.employeecrud.exceptions.UserNotFoundException;
 import com.exceptionhandling.practice.employeecrud.service.EmployeeService;
@@ -8,11 +9,15 @@ import com.exceptionhandling.practice.employeecrud.service.EmployeeService;
 import com.exceptionhandling.practice.employeecrud.util.EmployeeLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
@@ -69,22 +74,59 @@ public class EmployeeController extends BaseController {
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
-    @PostMapping(value="/employees", consumes="application/json")
+    @PostMapping(value="/employees", consumes="application/json", produces = "application/xml")
     public ResponseEntity<Employee> addNewEmployee(@RequestBody @Validated EmployeeDto employeeDto) {
 
         EmployeeLogger.logStart(this, "addNewEmployee");
 
         EmployeeLogger.logInfo(this,  "calling addEmployee method...");
 
-        Employee employee = employeeService.addEmployee(employeeDto);
+        Employee employee = new Employee();
+        employee.setEmployeeName(employeeDto.getEmployeeName());
+        employee.setEmployeeDept(employeeDto.getEmployeeDept());
+        employee.setBaseClass(new BaseClass("1111",new Date(), "1111", new Date()));
+
+        Employee savedEmployee = employeeService.addEmployee(employee);
 
         EmployeeLogger.logEnd(this, "addNewEmployee");
 
         return new ResponseEntity<>(employee, HttpStatus.CREATED);
     }
 
+    @PutMapping(value = "/employees/{employeeId}", consumes = "application/json")
+    public ResponseEntity<Employee> updateEmployeeUsingPut(@PathVariable("employeeId") int employeeId,
+                                                           @RequestBody @Validated EmployeeDto employeeDto) throws UserNotFoundException {
+       EmployeeLogger.logStart(this, "updateEmployeeUsingPut");
+
+        Employee employee = new Employee();
+        employee.setEmployeeId(employeeId);
+        employee.setEmployeeName(employeeDto.getEmployeeName());
+        employee.setEmployeeDept(employeeDto.getEmployeeDept());
+
+        EmployeeLogger.logInfo(this, "calling updateEmployeeUsingPutMethod...");
+        employee = employeeService.updateEmployeeUsingPutMethod(employee);
+
+        EmployeeLogger.logEnd(this, "updateEmployeeUsingPut");
+        return new ResponseEntity<>(employee, HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "/employees/{employeeId}", consumes = "application/json")
+    public ResponseEntity<Employee> updateEmployeeUsingPatch(@PathVariable("employeeId") int employeeId,
+                                                             @RequestBody @Validated Map<Object, Object> fields) throws UserNotFoundException {
+
+        EmployeeLogger.logStart(this, "updateEmployeeUsingPatch");
+        Employee employee = null;
+
+        EmployeeLogger.logInfo(this, "calling the updateEmployeeUsingPatchMethod... ");
+        employee = employeeService.updateEmployeeUsingPatchMethod(employeeId, fields);
+
+        EmployeeLogger.logEnd(this, "updateEmployeeUsingPatch");
+        return new ResponseEntity<>(employee, HttpStatus.OK);
+    }
+
     @DeleteMapping("/employees/{employeeId}")
-    public ResponseEntity<String> deleteEmployee(@PathVariable("employeeId") int employeeId) throws UserNotFoundException {
+    public ResponseEntity<String> deleteEmployee(@PathVariable(name = "employeeId", required = true) int employeeId)
+            throws UserNotFoundException {
 
         EmployeeLogger.logStart(this, "deleteEmployee");
 
