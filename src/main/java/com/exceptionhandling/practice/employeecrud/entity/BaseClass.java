@@ -22,4 +22,6 @@ public class BaseClass {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdateTimestamp;
 
+
+
 }

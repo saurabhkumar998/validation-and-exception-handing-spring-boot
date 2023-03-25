@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 
 @Entity
 @Data
@@ -23,4 +25,17 @@ public class Employee{
     @Embedded
     private BaseClass baseClass;
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return employeeId == employee.employeeId && employeeName.equals(employee.employeeName) && employeeDept.equals(employee.employeeDept);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(employeeId, employeeName, employeeDept);
+    }
 }

@@ -65,7 +65,7 @@ public class FileUploadController {
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(document.getDocumentType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "document; documentname=\"" + document.getDocumentName()
+                        "document; filename=\"" + document.getDocumentName()
                 +"\"")
                 .body(new ByteArrayResource(document.getData()));
     }

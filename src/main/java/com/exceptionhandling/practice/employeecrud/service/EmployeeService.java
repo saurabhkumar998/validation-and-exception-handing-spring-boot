@@ -13,7 +13,7 @@ public interface EmployeeService {
     public List<Employee> findAllEmployees();
     public Employee findEmployee(int employeeId) throws UserNotFoundException;
 
-    public Employee addEmployee(EmployeeDto employeeDto);
+    public Employee addEmployee(Employee employee);
     public void removeEmployee(int employeeId) throws UserNotFoundException;
 
     public Employee updateEmployeeUsingPutMethod(Employee employee) throws UserNotFoundException;

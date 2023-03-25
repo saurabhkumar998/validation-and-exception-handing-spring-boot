@@ -31,7 +31,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<Employee> findAllEmployees() {
-        return repository.findAll();
+        return repository.findAllEmployeesUsingNativeQuery();
     }
 
     @Override
@@ -52,13 +52,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee addEmployee(EmployeeDto employeeDto) {
+    public Employee addEmployee(Employee employee) {
         EmployeeLogger.logStart(this, "addEmployee");
 
-        Employee employee = new Employee();
-        employee.setEmployeeName(employeeDto.getEmployeeName());
-        employee.setEmployeeDept(employeeDto.getEmployeeDept());
-        employee.setBaseClass(new BaseClass("1111",new Date(), "1111", new Date()));
+
 
         EmployeeLogger.logInfo(this, "calling the repository save method...");
         Employee  employeeAfterSaving =repository.save(employee);

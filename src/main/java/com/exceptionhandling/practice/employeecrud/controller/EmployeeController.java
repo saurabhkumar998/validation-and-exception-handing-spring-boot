@@ -1,6 +1,7 @@
 package com.exceptionhandling.practice.employeecrud.controller;
 
 import com.exceptionhandling.practice.employeecrud.dto.EmployeeDto;
+import com.exceptionhandling.practice.employeecrud.entity.BaseClass;
 import com.exceptionhandling.practice.employeecrud.entity.Employee;
 import com.exceptionhandling.practice.employeecrud.exceptions.UserNotFoundException;
 import com.exceptionhandling.practice.employeecrud.service.EmployeeService;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -79,7 +81,12 @@ public class EmployeeController extends BaseController {
 
         EmployeeLogger.logInfo(this,  "calling addEmployee method...");
 
-        Employee employee = employeeService.addEmployee(employeeDto);
+        Employee employee = new Employee();
+        employee.setEmployeeName(employeeDto.getEmployeeName());
+        employee.setEmployeeDept(employeeDto.getEmployeeDept());
+        employee.setBaseClass(new BaseClass("1111",new Date(), "1111", new Date()));
+
+        Employee savedEmployee = employeeService.addEmployee(employee);
 
         EmployeeLogger.logEnd(this, "addNewEmployee");
 

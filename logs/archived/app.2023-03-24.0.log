@@ -1,0 +1,15 @@
+00:27:09.562 [restartedMain] INFO  c.e.p.e.EmployeeCrudApplication - Starting EmployeeCrudApplication using Java 19.0.2 with PID 14952 (E:\spring boot practice\EmployeeCrud\target\classes started by Saurabh in E:\spring boot practice\EmployeeCrud)
+00:27:09.590 [restartedMain] INFO  c.e.p.e.EmployeeCrudApplication - No active profile set, falling back to 1 default profile: "default"
+00:27:22.139 [restartedMain] INFO  c.e.p.e.EmployeeCrudApplication - Started EmployeeCrudApplication in 13.602 seconds (process running for 20.555)
+00:47:12.619 [http-nio-7777-exec-1] INFO  c.e.p.e.c.EmployeeController - addNewEmployee - START
+00:47:12.620 [http-nio-7777-exec-1] INFO  c.e.p.e.c.EmployeeController - calling addEmployee method...
+00:47:12.678 [http-nio-7777-exec-1] INFO  c.e.p.e.service.EmployeeServiceImpl - addEmployee - START
+00:47:12.679 [http-nio-7777-exec-1] INFO  c.e.p.e.service.EmployeeServiceImpl - calling the repository save method...
+00:47:13.008 [http-nio-7777-exec-1] INFO  c.e.p.e.service.EmployeeServiceImpl - addEmployee - END
+00:47:13.143 [http-nio-7777-exec-1] INFO  c.e.p.e.c.EmployeeController - addNewEmployee - END
+00:47:24.348 [http-nio-7777-exec-3] INFO  c.e.p.e.c.EmployeeController - getAllEmployees - START
+00:47:24.348 [http-nio-7777-exec-3] INFO  c.e.p.e.c.EmployeeController - calling findAllEmployees method...
+00:47:24.548 [http-nio-7777-exec-3] INFO  c.e.p.e.c.EmployeeController - getAllEmployees - END
+03:02:57.354 [main] INFO  c.e.p.e.r.EmployeeRepositoryTest - Starting EmployeeRepositoryTest using Java 19.0.2 with PID 15376 (started by Saurabh in E:\spring boot practice\EmployeeCrud)
+03:02:57.369 [main] INFO  c.e.p.e.r.EmployeeRepositoryTest - No active profile set, falling back to 1 default profile: "default"
+03:03:18.751 [main] INFO  c.e.p.e.r.EmployeeRepositoryTest - Started EmployeeRepositoryTest in 22.367 seconds (process running for 27.784)
