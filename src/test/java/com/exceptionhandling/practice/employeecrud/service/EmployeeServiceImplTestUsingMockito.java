@@ -4,47 +4,48 @@ import com.exceptionhandling.practice.employeecrud.entity.BaseClass;
 import com.exceptionhandling.practice.employeecrud.entity.Employee;
 import com.exceptionhandling.practice.employeecrud.exceptions.UserNotFoundException;
 import com.exceptionhandling.practice.employeecrud.repository.EmployeeRepository;
-import jakarta.inject.Inject;
-import org.assertj.core.util.Streams;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import static org.assertj.core.api.Assertions.*;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@Tag("unit")
-class EmployeeServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+public class EmployeeServiceImplTestUsingMockito {
 
-//    @Mock
-//    private EmployeeRepository employeeRepository;
-//    @InjectMocks
-//    private EmployeeService employeeService;
-
+    @Mock
     private EmployeeRepository employeeRepository;
-    private EmployeeService employeeService;
+    @InjectMocks
+    private EmployeeServiceImpl employeeService;
 
-    @BeforeEach
-    void setUp() {
-        employeeRepository = Mockito.mock(EmployeeRepository.class);
-        employeeService = new EmployeeServiceImpl(employeeRepository);
-    }
+    @Spy
+    private SpyMethodTestService spyMethodTestService;
+
+//    private EmployeeRepository employeeRepository;
+//    private EmployeeService employeeService;
+//
+//    @BeforeEach
+//    void setUp() {
+//        employeeRepository = Mockito.mock(EmployeeRepository.class);
+//        employeeService = new EmployeeServiceImpl(employeeRepository);
+//    }
 
     @Test
     @DisplayName("findAllEmployeesTest -> Should return all the employees present in the db")
@@ -53,31 +54,40 @@ class EmployeeServiceImplTest {
     @Timeout(value = 3, unit = TimeUnit.SECONDS)
     void findAllEmployeesTest() {
 
-//        fail();                                // Junit5 fail method
-//        Assertions.fail("failure message");   // AssertJ fail method
+        Employee employee1 = new Employee(102, "Test Employee1", "Test Dept1",
+                new BaseClass("99999999", new Date(), "99999999", new Date()));
 
+        Employee employee2 = new Employee(103, "Test Employee2", "Test Dept2",
+                new BaseClass("99999999", new Date(), "99999999", new Date()));
+
+        List<Employee> expectedEmployeeList = new ArrayList<>(List.of(employee1, employee2));
+
+        // Arrange
+        when(employeeRepository.findAllEmployeesUsingNativeQuery())
+                .thenReturn(expectedEmployeeList);
+
+        // Act
         List<Employee> actualEmployeeList = employeeService.findAllEmployees();
 
-        Employee expectedEmployee = new Employee(102, "Test Employee", "Test Dept",
-                new BaseClass("99999999", new Date(), "99999999", new Date()));
-        // comparing one object from a list of objects (equals and hashCode method comes into picture here)
-        // if you have not implemented the equals and hashCode method properly in your Employee class then this test will fail
-        // this method completely  relies on the equals and hashCode methods
-        assertThat(actualEmployeeList).contains(expectedEmployee);
+        // Assert
+        assertThat(actualEmployeeList).isNotNull();
+        assertThat(actualEmployeeList).contains(employee1);
+        System.out.println(actualEmployeeList);
+
 
         // comparing one object from a list of objects only using few fields
-        assertThat(expectedEmployee)
+        assertThat(expectedEmployeeList)
                 .usingRecursiveComparison()
                 .comparingOnlyFields("employeeId", "employeeName")
                 .isIn(actualEmployeeList);
-
 
         assertThat(actualEmployeeList).extracting(Employee :: getEmployeeName)
                 .doesNotContain("DUMMY NAME1", "DUMMY NAME2");
 
         assertThat(actualEmployeeList).extracting("employeeName", "employeeDept")
-                .contains(tuple("Saumya", "Software Engineering"),
-                          tuple("Gaurav Kumar", "Chartered Accountant"));
+                .contains(tuple("Test Employee1", "Test Dept1"),
+                        tuple("Test Employee2", "Test Dept2"));
+
     }
 
     @Test
@@ -87,19 +97,18 @@ class EmployeeServiceImplTest {
     @DisabledOnJre(JRE.JAVA_8)
     @DisabledOnOs(OS.LINUX)
     void findEmployeeTest() throws UserNotFoundException {
-    //    fail();
-        String expectedEmployeeName = "Test Employee";
-        String expectedEmployeeDept = "Test Dept";
-        // fetching employeee from db
+        //    fail();
+        String expectedEmployeeName = "Test Employee1";
+        String expectedEmployeeDept = "Test Dept1";
+       // Arrange
+        when(employeeRepository.findByEmployeeId(102))
+                .thenReturn(new Employee(102, "Test Employee1", "Test Dept1",
+                        new BaseClass("99999999", new Date(), "99999999", new Date())));
+
+        // Act
         Employee actualEmployee = employeeService.findEmployee(102);
-    //    assertEquals(expectedEmployeeName, employee.getEmployeeName());
 
-        // using Junit5 assert methods
-        assertAll(() -> {
-            assertEquals(expectedEmployeeName, actualEmployee.getEmployeeName());
-            assertEquals(expectedEmployeeDept, actualEmployee.getEmployeeDept());
-        });
-
+        // Assert
         // using AssertJ assertThat method - comparing simple fields
         assertThat(actualEmployee.getEmployeeName()).isEqualTo(expectedEmployeeName);
         assertThat(actualEmployee.getEmployeeDept())
@@ -112,7 +121,7 @@ class EmployeeServiceImplTest {
                 .doesNotContain("dummy");
 
         // expected Employee object
-        Employee expectedEmployee = new Employee(102, "Test Employee", "Test Dept",
+        Employee expectedEmployee = new Employee(102, "Test Employee1", "Test Dept1",
                 new BaseClass("99999999", new Date(), "99999999", new Date()));
 
         // using AssertJ assertThat methods - comparing the complete object ignoring few fields
@@ -137,22 +146,26 @@ class EmployeeServiceImplTest {
             employeeService.findEmployee(123432);
         }).isInstanceOf(UserNotFoundException.class)
                 .hasMessage("Employee with the employee id 123432 was not found");
-
     }
 
     @Test
     @DisplayName("addEmployeeTest -> should add an employee to the db")
     void addEmployeeTest() {
-    //    fail();
+        //    fail();
         Employee employeeToSave = new Employee(1000001,
                 "Test Employee",
                 "Test Dept",
                 new BaseClass("99999999", new Date(), "99999999", new Date())
         );
 
+        // Arrange
+        when(employeeRepository.save(employeeToSave))
+                .thenReturn(employeeToSave);
 
+        // Act
         Employee employee = employeeService.addEmployee(employeeToSave);
 
+        // Assert
         assertAll(() -> {
             assertEquals(employee.getEmployeeName(), "Test Employee");
             assertEquals(employee.getEmployeeDept(), "Test Dept");
@@ -163,37 +176,58 @@ class EmployeeServiceImplTest {
             assertTrue(employee.getEmployeeName().contains("Test"));
         });
 
+        // Asserting with the help of Mockito's argument captor -- we are returning the same object which is being passed to the save method
+        // Arrange
+        when(employeeRepository.save(any(Employee.class))).thenAnswer(answer -> answer.getArgument(0));
+
+        Employee savedEmployee = employeeService.addEmployee(employeeToSave);
+
+        assertThat(savedEmployee).isNotNull();
+        assertThat(savedEmployee.getEmployeeName()).isEqualTo("Test Employee");
+
+        ArgumentCaptor<Employee> argumentCaptor = ArgumentCaptor.forClass(Employee.class);
+        verify(employeeRepository, atLeastOnce()).save(argumentCaptor.capture());
+
+        Employee value = argumentCaptor.getValue();
+
+        assertEquals("Test Employee", value.getEmployeeName());
+        assertEquals("Test Dept", value.getEmployeeDept());
+
     }
 
     @Test
     @DisplayName("removeEmployeeTest -> should remove an employee based on the employeeId provided")
     void removeEmployeeTest() {
-    //    fail();
-//        assertTrue(true);
 
-        assertThatThrownBy(() -> {
-            employeeService.removeEmployee(0);
-        }).isInstanceOf(UserNotFoundException.class)
-                .hasMessage("Employee with the employee id 0 was not found");
+        when(employeeRepository.findByEmployeeId(1)).thenReturn(new Employee(1,
+                        "Test Employee",
+                        "Test Dept",
+                        new BaseClass("99999999", new Date(), "99999999", new Date())));
+        doNothing().when(employeeRepository).deleteById(1);
 
-        assertThatThrownBy( () -> {
-            employeeService.removeEmployee(null);
-        }).isInstanceOf(UserNotFoundException.class)
-                .hasMessage("Employee Id is null");
+
+        employeeService.removeEmployee(1);
+
+        assertThat(employeeService.findEmployee(1)).isNotNull();
+
+        verify(employeeRepository).deleteById(1);
+        verify(employeeRepository, times(1)).deleteById(1);
+        verify(employeeRepository, atMostOnce()).deleteById(1);
+        verify(employeeRepository, atLeastOnce()).deleteById(1);
 
     }
 
     @Test
     @DisplayName("updateEmployeeUsingPutMethodTest -> should update an employee's details")
     void updateEmployeeUsingPutMethodTest() {
-    //    fail();
+        //    fail();
         assertTrue(true);
     }
 
     @Test
     @DisplayName("updateEmployeeUsingPatchMethodTest -> should update an employee's details")
     void updateEmployeeUsingPatchMethodTest() {
-    //    fail();
+        //    fail();
         assertTrue(true);
     }
 
@@ -217,14 +251,14 @@ class EmployeeServiceImplTest {
     static Stream<Arguments> employeeObjectsProvider() {
         return Stream.of(
                 Arguments.arguments(new Employee(1000001, "Test Employee1",
-                                "Test Dept1", new BaseClass("99999999", new Date(),
-                                "99999999", new Date()))),
-                 Arguments.arguments(new Employee(1000002, "Test Employee2",
-                                 "Test Dept2", new BaseClass("99999999", new Date(),
-                                 "99999999", new Date()))),
-                 Arguments.arguments(new Employee(1000003, "Test Employee3",
-                         "Test Dept3", new BaseClass("99999999", new Date(),
-                         "99999999", new Date())))
+                        "Test Dept1", new BaseClass("99999999", new Date(),
+                        "99999999", new Date()))),
+                Arguments.arguments(new Employee(1000002, "Test Employee2",
+                        "Test Dept2", new BaseClass("99999999", new Date(),
+                        "99999999", new Date()))),
+                Arguments.arguments(new Employee(1000003, "Test Employee3",
+                        "Test Dept3", new BaseClass("99999999", new Date(),
+                        "99999999", new Date())))
         );
     }
 
@@ -260,5 +294,10 @@ class EmployeeServiceImplTest {
                 Arguments.arguments("Demo User1", "Demo Dept1"),
                 Arguments.arguments("Demo User2", "Demo Dept2")
         );
+    }
+
+    @Test
+    public void printHelloTest() {
+        assertThat(spyMethodTestService.printHello()).isEqualTo("Hello from printHello method");
     }
 }

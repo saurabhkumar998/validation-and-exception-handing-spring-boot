@@ -4,6 +4,7 @@ import com.exceptionhandling.practice.employeecrud.entity.Employee;
 import org.hibernate.validator.constraints.ModCheck;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -14,6 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 //@DataJpaTest
 @SpringBootTest
+@Tag("unit")
 class EmployeeRepositoryTest {
 
     @Autowired
