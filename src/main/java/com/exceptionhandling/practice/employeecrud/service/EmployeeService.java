@@ -14,9 +14,10 @@ public interface EmployeeService {
     public Employee findEmployee(int employeeId) throws UserNotFoundException;
 
     public Employee addEmployee(Employee employee);
-    public void removeEmployee(int employeeId) throws UserNotFoundException;
+    public void removeEmployee(Integer employeeId) throws UserNotFoundException;
 
     public Employee updateEmployeeUsingPutMethod(Employee employee) throws UserNotFoundException;
 
     Employee updateEmployeeUsingPatchMethod(int employeeId, Map<Object, Object> fields) throws UserNotFoundException;
+
 }

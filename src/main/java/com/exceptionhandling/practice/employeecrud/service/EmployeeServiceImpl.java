@@ -10,6 +10,7 @@ import com.exceptionhandling.practice.employeecrud.util.EmployeeLogger;
 import jakarta.transaction.Transactional;
 import org.apache.el.util.ReflectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
@@ -24,10 +25,15 @@ import java.util.Objects;
 
 @Service
 @Transactional
+@Primary
 public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     private EmployeeRepository repository;
+
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+        this.repository = employeeRepository;
+    }
 
     @Override
     public List<Employee> findAllEmployees() {
@@ -66,18 +72,31 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void removeEmployee(int employeeId) throws UserNotFoundException {
+    public void removeEmployee(Integer employeeId) throws UserNotFoundException {
 
         EmployeeLogger.logStart(this, "removeEmployee");
 
         EmployeeLogger.logInfo(this, "calling findEmployee...");
-        Employee employee = this.findEmployee(employeeId);
+
+        Employee employee = null;
+        try {
+            employee = this.findEmployee(employeeId);
+        } catch (NullPointerException e) {
+            throw new UserNotFoundException("Employee Id is null");
+        } catch (UserNotFoundException e) {
+            throw new UserNotFoundException("Employee with the employee id " + employeeId + " was not found");
+        }
 
         if(employee == null) {
-             throw new RuntimeException("Employee not Found");
+             throw new UserNotFoundException("Employee not Found");
         }else {
             EmployeeLogger.logInfo(this, "calling deleteById...");
-            repository.deleteById(employeeId);
+            try {
+                repository.deleteById(employeeId);
+            } catch (NullPointerException e) {
+                throw new UserNotFoundException("Employee Id is null");
+            }
+
         }
 
         EmployeeLogger.logEnd(this, "removeEmployee");
@@ -132,4 +151,5 @@ public class EmployeeServiceImpl implements EmployeeService {
         EmployeeLogger.logEnd(this, "updateEmployeeUsingPatchMethod");
         return returnedEmployee;
     }
+
 }
